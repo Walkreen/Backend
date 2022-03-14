@@ -3,6 +3,7 @@ package capstone.walkreen.service;
 import capstone.walkreen.JwtUtil;
 import capstone.walkreen.auth.TokenInfo;
 import capstone.walkreen.auth.TokenResponse;
+import capstone.walkreen.dto.LogInRequest;
 import capstone.walkreen.dto.SignUpRequest;
 import capstone.walkreen.dto.UserMapper;
 import capstone.walkreen.dto.UserResponse;
@@ -39,9 +40,19 @@ public class UserService {
         return userResponse;
     }
 
+    public UserResponse logIn(LogInRequest logInRequest){
+        // 아이디 조회
+        // 비밀번호 조회
+        // 올바르게 있다면 토큰 생성
+        // 해당 유저 정보와 생성된 토큰을 User response 에 저장하여 return
+    }
+
     public User save(User user) { return userRepository.save(user);}
 
     private TokenInfo getTokenInfo(User user) {
         return new TokenInfo(user.getId(), user.getEmail(), user.getAuthority());
     }
+
+
+
 }
