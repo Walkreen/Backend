@@ -1,4 +1,4 @@
-# No More Rounding API Document
+# Walkreen API Document
 
 **version 1.0**
 
