@@ -2,14 +2,12 @@ package capstone.walkreen.controller;
 
 import capstone.walkreen.dto.LogInRequest;
 import capstone.walkreen.dto.SignUpRequest;
+import capstone.walkreen.dto.StringResponse;
 import capstone.walkreen.dto.UserResponse;
 import capstone.walkreen.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,5 +24,11 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<UserResponse> logIn(@RequestBody LogInRequest logInRequest) {
         return ResponseEntity.ok().body(userService.logIn(logInRequest));
+    }
+
+    @GetMapping("/exists/{email}")
+    public ResponseEntity<StringResponse> existByEmail(@PathVariable("email") String email) {
+        return ResponseEntity.ok().body(userService.existsByEmail(email));
+
     }
 }
