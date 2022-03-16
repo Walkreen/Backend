@@ -1,13 +1,17 @@
 package capstone.walkreen.controller;
 
-import capstone.walkreen.dto.LogInRequest;
-import capstone.walkreen.dto.SignUpRequest;
-import capstone.walkreen.dto.StringResponse;
-import capstone.walkreen.dto.UserResponse;
+import capstone.walkreen.dto.*;
 import capstone.walkreen.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 @RestController
 @RequiredArgsConstructor
@@ -16,7 +20,7 @@ public class UserController {
 
     private final UserService userService;
 
-    @PostMapping("/signup")
+    @PostMapping("/signup") // 닉네임 중복 검사
     public ResponseEntity<UserResponse> signUp(@RequestBody SignUpRequest signUpRequest) {
         return ResponseEntity.ok().body(userService.signUp(signUpRequest));
     }
@@ -26,9 +30,8 @@ public class UserController {
         return ResponseEntity.ok().body(userService.logIn(logInRequest));
     }
 
-    @GetMapping("/exists/{email}")
-    public ResponseEntity<StringResponse> existByEmail(@PathVariable("email") String email) {
+    @GetMapping("/exists/{email}") // 이메일 유효성 검사 필요
+    public ResponseEntity<BooleanResponse> existByEmail(@PathVariable("email") String email) {
         return ResponseEntity.ok().body(userService.existsByEmail(email));
-
     }
 }
