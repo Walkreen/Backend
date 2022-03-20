@@ -29,6 +29,7 @@ public class UserController {
     @GetMapping("/exists/{email}")
     public ResponseEntity<StringResponse> existByEmail(@PathVariable("email") String email) {
         return ResponseEntity.ok().body(userService.existsByEmail(email));
+        //boolean
 
     }
 }

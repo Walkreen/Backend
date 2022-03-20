@@ -10,6 +10,7 @@ import capstone.walkreen.exception.InvalidPasswordException;
 import capstone.walkreen.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +21,7 @@ public class UserService {
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
     private final AuthService authService;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public UserResponse signUp(SignUpRequest signUpRequest) {
@@ -41,10 +43,11 @@ public class UserService {
     public UserResponse logIn(LogInRequest logInRequest) {
         // 아이디 조회
         // 첫번째 과정을 통과하면 무조건 user 가 존재할 수 밖에 없어서 exception 처리 x
-        User user = userRepository.findUserByEmail(logInRequest.getEmail());
+        final User user = userRepository.findUserByEmail(logInRequest.getEmail());
 
         // 비밀번호 조회
-        if(!authService.isPasswordMatches(logInRequest.getPassword(),user)){
+        if(!passwordEncoder.matches(logInRequest.getPassword(), user.getPassword())){
+            //throw InvalidPasswordException::new;
             throw new InvalidPasswordException();
         }
 
@@ -75,7 +78,7 @@ public class UserService {
         return stringResponse;
     }
 
-    public User findUserByEmail(String email){
+    /*public User findUserByEmail(String email){
         return userRepository.findUserByEmail(email);
-    }
+    }*/
 }

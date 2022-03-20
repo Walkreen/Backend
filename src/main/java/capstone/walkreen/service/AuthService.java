@@ -18,12 +18,4 @@ public class AuthService {
 
         return encoded;
     }
-
-    public boolean isPasswordMatches(String password, User user) {
-        if (passwordEncoder.matches(password, user.getPassword())) {
-            return true;
-        } else {
-            return false;
-        }
-    }
 }
