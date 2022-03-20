@@ -26,6 +26,7 @@ public class UserService {
     @Transactional
     public UserResponse signUp(SignUpRequest signUpRequest) {
 
+        // 중복 검사에 관한 의문.. 닉네임-이메일-
         signUpRequest.setPassword(authService.encodePassword(signUpRequest.getPassword()));
 
         final User user = UserMapper.INSTANCE.requestToUser(signUpRequest);
@@ -66,16 +67,12 @@ public class UserService {
         return new TokenInfo(user.getId(), user.getEmail(), user.getAuthority());
     }
 
-    public StringResponse existsByEmail(String email) {
-        // 1. 코드 진행에 관한 의문
-        // 2. http code로 성공 실패를 나누는게 어떤지.
-        StringResponse stringResponse = new StringResponse("존재하지 않는 이메일입니다.");
+    public BooleanResponse existsByEmail(String email) {
 
-        if(userRepository.existsByEmail(email)){
-            stringResponse.setMessage("존재하는 이메일입니다.");
+        if(userRepository.existsByEmail(email)) {
+            return new BooleanResponse(true);
         }
-
-        return stringResponse;
+        else { return new BooleanResponse(false); }
     }
 
     /*public User findUserByEmail(String email){
