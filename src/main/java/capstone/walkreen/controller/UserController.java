@@ -16,11 +16,12 @@ import javax.validation.constraints.Size;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/user")
+@Validated
 public class UserController {
 
     private final UserService userService;
 
-    @PostMapping("/signup") // 닉네임 중복 검사
+    @PostMapping("/signup")
     public ResponseEntity<UserResponse> signUp(@RequestBody SignUpRequest signUpRequest) {
         return ResponseEntity.ok().body(userService.signUp(signUpRequest));
     }
@@ -30,9 +31,8 @@ public class UserController {
         return ResponseEntity.ok().body(userService.logIn(logInRequest));
     }
 
-    @GetMapping("/exists/{email}") // 이메일 유효성 검사 필요
-    public ResponseEntity<BooleanResponse> existByEmail(@PathVariable("email") String email) {
+    @GetMapping("/exists/{email}")
+    public ResponseEntity<BooleanResponse> existByEmail(@PathVariable("email") @Email String email) {
         return ResponseEntity.ok().body(userService.existsByEmail(email));
-        //boolean
     }
 }

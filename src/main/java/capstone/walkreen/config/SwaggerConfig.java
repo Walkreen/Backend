@@ -25,7 +25,7 @@ public class SwaggerConfig {
 
     public ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-            .title("No More Rounding API Document")
+            .title("Workreen API Document")
             .version("1.0")
             .description("Spring Boot Rest API")
             .build();
