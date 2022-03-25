@@ -68,11 +68,7 @@ public class UserService {
     }
 
     public BooleanResponse existsByEmail(String email) {
-
-        if(userRepository.existsByEmail(email)) {
-            return new BooleanResponse(true);
-        }
-        else { return new BooleanResponse(false); }
+        return new BooleanResponse(userRepository.existsByEmail(email));
     }
 
     /*public User findUserByEmail(String email){
