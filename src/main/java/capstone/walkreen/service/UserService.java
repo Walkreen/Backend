@@ -6,6 +6,7 @@ import capstone.walkreen.auth.TokenResponse;
 import capstone.walkreen.dto.*;
 import capstone.walkreen.entity.User;
 import capstone.walkreen.enumerations.Authority;
+import capstone.walkreen.exception.DuplicateNicknameException;
 import capstone.walkreen.exception.InvalidPasswordException;
 import capstone.walkreen.repository.UserRepository;
 import lombok.AllArgsConstructor;
@@ -26,14 +27,14 @@ public class UserService {
     @Transactional
     public UserResponse signUp(SignUpRequest signUpRequest) {
 
-        // 중복 검사에 관한 의문.. 닉네임-이메일-
+        // 중복된 닉네임 검사
+        if(userRepository.existsByNickname(signUpRequest.getNickname())) { throw new DuplicateNicknameException(); }
+
         signUpRequest.setPassword(authService.encodePassword(signUpRequest.getPassword()));
 
         final User user = UserMapper.INSTANCE.requestToUser(signUpRequest);
 
         final User savedUser = save(user);
-
-        //savedUser.setToken(jwtUtil.generateToken(savedUser.getId(), savedUser.getEmail(), savedUser.getAuthority()));
 
         UserResponse userResponse = UserMapper.INSTANCE.userToResponse(savedUser);
         userResponse.setTokenResponse(jwtUtil.generateToken(getTokenInfo(savedUser)));
