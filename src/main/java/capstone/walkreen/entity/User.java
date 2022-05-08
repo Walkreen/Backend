@@ -22,7 +22,7 @@ import org.hibernate.annotations.DynamicUpdate;
 @NoArgsConstructor
 @AllArgsConstructor
 @DynamicUpdate
-public class User extends BaseEntity{
+public class User extends BaseEntity {
 
     private String email;
 
