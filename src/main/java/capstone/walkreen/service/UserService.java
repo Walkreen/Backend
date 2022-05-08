@@ -1,14 +1,15 @@
 package capstone.walkreen.service;
 
-import capstone.walkreen.JwtUtil;
+import capstone.walkreen.exception.DuplicateEmailException;
+import capstone.walkreen.exception.DuplicateNicknameException;
+import capstone.walkreen.exception.InvalidUserException;
+import capstone.walkreen.util.JwtUtil;
 import capstone.walkreen.auth.TokenInfo;
-import capstone.walkreen.auth.TokenResponse;
 import capstone.walkreen.dto.*;
 import capstone.walkreen.entity.User;
-import capstone.walkreen.enumerations.Authority;
 import capstone.walkreen.exception.InvalidPasswordException;
 import capstone.walkreen.repository.UserRepository;
-import lombok.AllArgsConstructor;
+import capstone.walkreen.util.PasswordUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -21,19 +22,25 @@ public class UserService {
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
     private final AuthService authService;
+    private final MailService mailService;
     private final PasswordEncoder passwordEncoder;
+
+    public StringResponse checkEmailAvailability(EmailRequest emailRequest) {
+        if (userRepository.existsByEmail(emailRequest.getEmail())) throw new DuplicateEmailException();
+
+        return new StringResponse("사용가능한 이메일입니다");
+    }
 
     @Transactional
     public UserResponse signUp(SignUpRequest signUpRequest) {
 
-        // 중복 검사에 관한 의문.. 닉네임-이메일-
+        if (userRepository.existsByEmail(signUpRequest.getEmail())) throw new DuplicateEmailException(); // 혹시 모름
+        if (userRepository.existsByNickname(signUpRequest.getNickname())) throw new DuplicateNicknameException();
+
         signUpRequest.setPassword(authService.encodePassword(signUpRequest.getPassword()));
 
         final User user = UserMapper.INSTANCE.requestToUser(signUpRequest);
-
-        final User savedUser = save(user);
-
-        //savedUser.setToken(jwtUtil.generateToken(savedUser.getId(), savedUser.getEmail(), savedUser.getAuthority()));
+        final User savedUser = userRepository.save(user);
 
         UserResponse userResponse = UserMapper.INSTANCE.userToResponse(savedUser);
         userResponse.setTokenResponse(jwtUtil.generateToken(getTokenInfo(savedUser)));
@@ -42,40 +49,35 @@ public class UserService {
     }
 
     public UserResponse logIn(LogInRequest logInRequest) {
-        // 아이디 조회
-        // 첫번째 과정을 통과하면 무조건 user 가 존재할 수 밖에 없어서 exception 처리 x
+
+        if (!userRepository.existsByEmail(logInRequest.getEmail())) throw new InvalidUserException();
+
         final User user = userRepository.findUserByEmail(logInRequest.getEmail());
 
-        // 비밀번호 조회
-        if(!passwordEncoder.matches(logInRequest.getPassword(), user.getPassword())){
-            //throw InvalidPasswordException::new;
-            throw new InvalidPasswordException();
-        }
+        if (!passwordEncoder.matches(logInRequest.getPassword(), user.getPassword())) throw new InvalidPasswordException();
 
         UserResponse userResponse = UserMapper.INSTANCE.userToResponse(user);
-
-        // 올바르게 있다면 토큰 생성
         userResponse.setTokenResponse(jwtUtil.generateToken(getTokenInfo(user)));
 
-        // 해당 유저 정보와 생성된 토큰을 User response 에 저장하여 return
         return userResponse;
     }
 
-    public User save(User user) { return userRepository.save(user);}
+    @Transactional
+    public StringResponse resetPassword(EmailRequest emailRequest) {
 
-    private TokenInfo getTokenInfo(User user) {
+        if(!userRepository.existsByEmail(emailRequest.getEmail())) throw new InvalidUserException();
+
+        final String randomPassword = PasswordUtil.randomPw();
+        mailService.sendPasswordMail(emailRequest.getEmail(), randomPassword);
+
+        User user = userRepository.findUserByEmail(emailRequest.getEmail());
+        user.setPassword(authService.encodePassword(randomPassword));
+        userRepository.save(user);
+
+        return new StringResponse("해당 계정의 이메일로 임시 비밀번호를 발송하였습니다");
+    }
+
+    private TokenInfo getTokenInfo(User user) { // 이거 JwtUtil로 돌릴지
         return new TokenInfo(user.getId(), user.getEmail(), user.getAuthority());
     }
-
-    public BooleanResponse existsByEmail(String email) {
-
-        if(userRepository.existsByEmail(email)) {
-            return new BooleanResponse(true);
-        }
-        else { return new BooleanResponse(false); }
-    }
-
-    /*public User findUserByEmail(String email){
-        return userRepository.findUserByEmail(email);
-    }*/
 }

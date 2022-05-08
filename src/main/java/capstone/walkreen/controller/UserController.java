@@ -20,7 +20,12 @@ public class UserController {
 
     private final UserService userService;
 
-    @PostMapping("/signup") // 닉네임 중복 검사
+    @PostMapping("/exists")
+    public ResponseEntity<StringResponse> checkEmailAvailability(@Valid @RequestBody EmailRequest emailRequest) {
+        return ResponseEntity.ok().body(userService.checkEmailAvailability(emailRequest));
+    }
+
+    @PostMapping("/signup")
     public ResponseEntity<UserResponse> signUp(@RequestBody SignUpRequest signUpRequest) {
         return ResponseEntity.ok().body(userService.signUp(signUpRequest));
     }
@@ -30,9 +35,8 @@ public class UserController {
         return ResponseEntity.ok().body(userService.logIn(logInRequest));
     }
 
-    @GetMapping("/exists/{email}") // 이메일 유효성 검사 필요
-    public ResponseEntity<BooleanResponse> existByEmail(@PathVariable("email") String email) {
-        return ResponseEntity.ok().body(userService.existsByEmail(email));
-        //boolean
+    @PostMapping("/reset")
+    public ResponseEntity<StringResponse> resetPassword(@Valid @RequestBody EmailRequest emailRequest) {
+        return ResponseEntity.ok().body(userService.resetPassword(emailRequest));
     }
 }

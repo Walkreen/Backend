@@ -1,4 +1,4 @@
-package capstone.walkreen;
+package capstone.walkreen.util;
 
 import capstone.walkreen.auth.Token;
 import capstone.walkreen.auth.TokenInfo;
