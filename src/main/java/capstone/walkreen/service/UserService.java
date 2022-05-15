@@ -15,10 +15,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
+
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
+
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
     private final AuthService authService;
@@ -50,9 +53,7 @@ public class UserService {
 
     public UserResponse logIn(LogInRequest logInRequest) {
 
-        if (!userRepository.existsByEmail(logInRequest.getEmail())) throw new InvalidUserException();
-
-        final User user = userRepository.findUserByEmail(logInRequest.getEmail());
+        final User user = userRepository.findUserByEmail(logInRequest.getEmail()).orElseThrow(InvalidUserException::new);
 
         if (!passwordEncoder.matches(logInRequest.getPassword(), user.getPassword())) throw new InvalidPasswordException();
 
@@ -65,12 +66,10 @@ public class UserService {
     @Transactional
     public StringResponse resetPassword(EmailRequest emailRequest) {
 
-        if(!userRepository.existsByEmail(emailRequest.getEmail())) throw new InvalidUserException();
+        User user = userRepository.findUserByEmail(emailRequest.getEmail()).orElseThrow(InvalidUserException::new);
 
         final String randomPassword = PasswordUtil.randomPw();
         mailService.sendPasswordMail(emailRequest.getEmail(), randomPassword);
-
-        User user = userRepository.findUserByEmail(emailRequest.getEmail());
         user.setPassword(authService.encodePassword(randomPassword));
         userRepository.save(user);
 
@@ -80,4 +79,5 @@ public class UserService {
     private TokenInfo getTokenInfo(User user) { // 이거 JwtUtil로 돌릴지
         return new TokenInfo(user.getId(), user.getEmail(), user.getAuthority());
     }
+
 }

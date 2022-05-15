@@ -40,17 +40,4 @@ public class User extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private Authority authority = Authority.USER;
-
-//
-//    @Column(columnDefinition = "varchar(400)")
-//    private String accessToken;
-//
-//    @Column(columnDefinition = "varchar(400)")
-//    private String refreshToken;
-//
-//
-//    public void setToken(TokenResponse tokenResponse) {
-//        this.accessToken = tokenResponse.getAccessToken();
-//        this.refreshToken = tokenResponse.getRefreshToken();
-//    }
 }
