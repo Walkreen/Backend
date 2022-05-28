@@ -1,5 +1,7 @@
 package capstone.walkreen.controller;
 
+import capstone.walkreen.dto.DailyRequest;
+import capstone.walkreen.dto.DailyResponse;
 import capstone.walkreen.dto.EmailRequest;
 import capstone.walkreen.dto.StringResponse;
 import capstone.walkreen.service.DailyService;
@@ -18,8 +20,20 @@ public class DailyController {
     private final DailyService dailyService;
 
     @GetMapping("/today")
-    public ResponseEntity<StringResponse> getNowDaily(HttpServletRequest httpServletRequest) {
-        return ResponseEntity.ok().body(dailyService.getNowDaily(httpServletRequest));
+    public ResponseEntity<DailyResponse> getTodayDaily(HttpServletRequest httpServletRequest) {
+        return ResponseEntity.ok().body(dailyService.getTodayDaily(httpServletRequest));
+    }
+
+    @PostMapping("/setToday")
+    public ResponseEntity<DailyResponse> setTodayDaily(DailyRequest dailyRequest, HttpServletRequest httpServletRequest) {
+        return ResponseEntity.ok().body(dailyService.getTodayDaily(httpServletRequest));
+    }
+
+    @GetMapping("/month")
+    public ResponseEntity<DailyResponse> getMonthDaily(
+            @RequestParam(value = "year") Integer year, @RequestParam(value = "month") Integer month,
+            HttpServletRequest httpServletRequest) {
+        return ResponseEntity.ok().body(dailyService.getMonthDaily(year, month, httpServletRequest));
     }
 
     @GetMapping("/test")

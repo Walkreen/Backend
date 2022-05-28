@@ -6,14 +6,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicUpdate;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.time.LocalDate;
 
 @Entity
 @Builder
@@ -26,7 +21,7 @@ public class Daily extends BaseEntity {
     @ManyToOne
     private User user;
 
-    private LocalDateTime completionDate;
+    private LocalDate completionDate;
 
     private Boolean missionA;
 

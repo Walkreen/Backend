@@ -1,13 +1,28 @@
 package capstone.walkreen.dto;
 
-import capstone.walkreen.entity.Daily;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-import java.util.List;
+import java.time.LocalDate;
 
 @Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class DailyResponse {
 
-    List<Daily> daily;
+    private LocalDate completionDate;
+
+    private Boolean missionA;
+
+    private Boolean missionB;
+
+    private Boolean missionC;
+
+    private Boolean missionD;
+
+    private Boolean missionE;
 
 }
