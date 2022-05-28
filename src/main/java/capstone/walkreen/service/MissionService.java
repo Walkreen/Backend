@@ -23,16 +23,14 @@ import java.util.ArrayList;
 public class MissionService {
 
     private final AuthService authService;
-    private final UserRepository userRepository;
     private final MissionRepository missionRepository;
-    private final JwtUtil jwtUtil;
 
     public StringResponse getNormalMission(Pageable pageable, HttpServletRequest httpServletRequest) {
         return new StringResponse("일단 오케이");
     }
 
     public StringResponse getDailyMission(HttpServletRequest httpServletRequest) {
-        final User user = getUserByToken(httpServletRequest);
+        final User user = authService.getUserByToken(httpServletRequest);
 
         return new StringResponse("미션 제출 완료");
     }
@@ -48,15 +46,6 @@ public class MissionService {
     public StringResponse testAPI(HttpServletRequest httpServletRequest) {
 
         return new StringResponse("일단 오케이");
-    }
-
-    private User getUserByToken(HttpServletRequest httpServletRequest) {
-
-        final String token = authService.getTokenByHeader(httpServletRequest);
-
-        if(jwtUtil.isTokenExpired(token)) throw new InvalidTokenException();
-
-        return userRepository.findUserByEmail(jwtUtil.getEmailByToken(token)).orElseThrow(InvalidUserException::new);
     }
 
     public StringResponse setMission(EmailRequest emailRequest) {

@@ -38,7 +38,7 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Authority authority = Authority.USER;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "id")
-    private List<DailyMission> dailyMission = new ArrayList<>();
+    @OneToMany(mappedBy = "user")
+    private List<Daily> dailyMission = new ArrayList<>();
 
 }
