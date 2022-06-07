@@ -16,15 +16,16 @@ import javax.persistence.Entity;
 @DynamicUpdate
 public class Mission extends BaseEntity {
 
-    private String name;
+    private String title;
 
     private String contents;
 
-    private String reward;
-
+    private Long reward;
+    
+    // 이거 시간 자료형 생각해야함
     private String startTime;
 
     private String endTime;
 
-    // private mission type
+    //private mission type;
 }
