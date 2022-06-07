@@ -19,7 +19,11 @@ import org.hibernate.annotations.DynamicUpdate;
 @NoArgsConstructor
 @AllArgsConstructor
 @DynamicUpdate
-public class User extends BaseEntity {
+public class User {
+
+    @Id
+    @GeneratedValue
+    private Long id;
 
     private String email;
 
@@ -41,4 +45,6 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user")
     private List<Daily> dailyMission = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user")
+    private List<UserMission> missions = new ArrayList<>();
 }

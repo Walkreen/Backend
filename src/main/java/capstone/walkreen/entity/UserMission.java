@@ -1,15 +1,39 @@
 package capstone.walkreen.entity;
 
 import capstone.walkreen.controller.MissionController;
+import capstone.walkreen.enumerations.MissionStatus;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
-public class UserMission extends BaseEntity {
+@Entity
+@Getter
+@NoArgsConstructor
+public class UserMission {
+
+    @Id
+    @GeneratedValue
+    @Column(name = "user_mission_id")
+    private Long id;
 
     @ManyToOne
-    //@JoinColumn(name)
+    @JoinColumn(name = "user_id")
     private User user;
 
+    @ManyToOne
+    @JoinColumn(name = "mission_id")
     private Mission mission;
+
+    @Setter
+    private MissionStatus status;
+
+    @Builder
+    public UserMission(User user, Mission mission, MissionStatus status) {
+        this.user = user;
+        this.mission = mission;
+        this.status = status;
+    }
 }

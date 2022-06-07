@@ -1,17 +1,15 @@
 package capstone.walkreen.controller;
 
-import capstone.walkreen.dto.CancelRequest;
-import capstone.walkreen.dto.EmailRequest;
-import capstone.walkreen.dto.StringResponse;
-import capstone.walkreen.dto.SubmitRequest;
+import capstone.walkreen.dto.*;
+import capstone.walkreen.entity.User;
+import capstone.walkreen.enumerations.MissionStatus;
+import capstone.walkreen.service.AuthService;
 import capstone.walkreen.service.MissionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -20,35 +18,83 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping("/api/mission")
 public class MissionController {
 
+    private final AuthService authService;
     private final MissionService missionService;
 
-    @PostMapping("/setmission")
-    public ResponseEntity<StringResponse> setMission(@RequestBody EmailRequest emailRequest) {
-        return ResponseEntity.ok().body(missionService.setMission(emailRequest));
+    @GetMapping("/get")
+    public ResponseEntity<PageMissionResponse> get(
+            @RequestParam("status")
+            MissionStatus status, HttpServletRequest httpServletRequest) {
+
+        final User user = authService.getUserByToken(httpServletRequest);
+        PageMissionResponse pageMissionResponse;
+
+        if (status.equals(MissionStatus.CAN))
+            pageMissionResponse = missionService.getCan(user);
+        else if (status.equals(MissionStatus.GOING))
+            pageMissionResponse = missionService.getGoing(user);
+        else
+            pageMissionResponse = missionService.getDone(user);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(pageMissionResponse);
     }
 
-    @PostMapping("/normal")
-    public ResponseEntity<StringResponse> getNormalMission(Pageable pageable, HttpServletRequest httpServletRequest) {
-        return ResponseEntity.ok().body(missionService.getNormalMission(pageable, httpServletRequest));
+    @PutMapping("join")
+    public ResponseEntity<MissionResponse> join(
+            @RequestParam("mission") Long missionId,
+            HttpServletRequest httpServletRequest) {
+
+        final User user = authService.getUserByToken(httpServletRequest);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(missionService.join(missionId, user));
     }
 
-    @PostMapping("/daliy")
-    public ResponseEntity<StringResponse> getDailyMission(HttpServletRequest httpServletRequest) {
-        return ResponseEntity.ok().body(missionService.getDailyMission(httpServletRequest));
+    @DeleteMapping("cancel")
+    public ResponseEntity<MissionResponse> cancel(
+            @RequestParam("mission") Long missionId,
+            HttpServletRequest httpServletRequest) {
+
+        final User user = authService.getUserByToken(httpServletRequest);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(missionService.cancel(missionId, user));
     }
 
     @PostMapping("submit")
-    public ResponseEntity<StringResponse> submitMission(@RequestBody SubmitRequest submitRequest, HttpServletRequest httpServletRequest) {
-        return ResponseEntity.ok().body(missionService.submitMission(submitRequest, httpServletRequest));
+    public ResponseEntity<MissionResponse> submit(
+            @RequestParam("mission") Long missionId,
+            HttpServletRequest httpServletRequest) {
+
+        final User user = authService.getUserByToken(httpServletRequest);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(missionService.submit(missionId, user));
     }
 
-    @PostMapping("cancel")
-    public ResponseEntity<StringResponse> cancelMission(@RequestBody CancelRequest cancelRequest, HttpServletRequest httpServletRequest) {
-        return ResponseEntity.ok().body(missionService.cancelMission(cancelRequest, httpServletRequest));
+    /////////////////////////////// for manager ///////////////////////////////
+    @GetMapping("/zget")
+    public ResponseEntity<PageMissionResponse> zget() {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(missionService.zget());
     }
 
-    @PostMapping("/test")
-    public ResponseEntity<StringResponse> testAPI(HttpServletRequest httpServletRequest) {
-        return ResponseEntity.ok().body(missionService.testAPI(httpServletRequest));
+    @PostMapping("/zset")
+    public ResponseEntity<MissionResponse> zset(@RequestBody SetMissionRequest setMissionRequest) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(missionService.zset(setMissionRequest));
     }
+
+    @DeleteMapping("/zdelete")
+    public ResponseEntity<Boolean> zdelete(@RequestParam Long missionId) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(missionService.zdelete(missionId));
+    }
+
+    @PutMapping("/zmake")
+    public ResponseEntity<Boolean> zmake() {
+        return ResponseEntity.ok().body(missionService.zmake());
+    }
+    /////////////////////////////// for manager ///////////////////////////////
 }
