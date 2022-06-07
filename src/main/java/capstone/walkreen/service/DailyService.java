@@ -1,20 +1,19 @@
 package capstone.walkreen.service;
 
-import capstone.walkreen.dto.DailyMapper;
-import capstone.walkreen.dto.DailyResponse;
-import capstone.walkreen.dto.InvalidMonthDailyException;
-import capstone.walkreen.dto.StringResponse;
+import capstone.walkreen.dto.*;
 import capstone.walkreen.entity.Daily;
 import capstone.walkreen.entity.User;
 import capstone.walkreen.exception.NotExistMonthDailyException;
 import capstone.walkreen.exception.NotExistTodayDailyException;
 import capstone.walkreen.repository.DailyRepository;
+import capstone.walkreen.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -23,13 +22,54 @@ public class DailyService {
 
     private final AuthService authService;
     private final DailyRepository dailyRepository;
+    private final UserRepository userRepository;
 
     public DailyResponse getTodayDaily(HttpServletRequest httpServletRequest) {
 
+        final LocalDate today = LocalDate.now();
+
+        final User user = authService.getUserByToken(httpServletRequest);
+        Daily daily = findDailyByUser(today, user);
+
+        return DailyMapper.INSTANCE.dailyToResponse(daily);
+    }
+
+    public DailyResponse setTodayDaily(DailyRequest dailyRequest, HttpServletRequest httpServletRequest) {
+
         final User user = authService.getUserByToken(httpServletRequest);
 
-        return DailyMapper.INSTANCE.dailyToResponse(findTodayDailyByUser(user));
+        Daily daily = findDailyByUser(dailyRequest.getCompletionDate(),user);
+
+        switch (dailyRequest.getMission()) {
+            case 'A' : daily.setMissionA(true);
+                        break ;
+            case 'B' : daily.setMissionB(true);
+                        break ;
+            case 'C' : daily.setMissionC(true);
+                        break ;
+            case 'D' : daily.setMissionD(true);
+                        break ;
+            case 'E' : daily.setMissionE(true);
+                        break ;
+            default : break ;
+        }
+        dailyRepository.save(daily);
+
+        System.out.println(daily.getCompletionDate().toString());
+
+
+        user.getDailyMission().add(daily);
+        System.out.println(user.getDailyMission().toString());
+        //user.setPoint(user.getPoint() + user);
+
+        //dailyRepository.save(testMission);
+
+        userRepository.save(user);
+
+        DailyResponse dailyResponse = DailyMapper.INSTANCE.dailyToResponse(daily);
+        return dailyResponse;
     }
+
 
     public DailyResponse getMonthDaily(Integer year, Integer month, HttpServletRequest httpServletRequest) {
 
@@ -115,14 +155,27 @@ public class DailyService {
         return new StringResponse("가상 데일리 미션을 추가하였습니다");
     }
 
-    private Daily findTodayDailyByUser(User user) {
-
-        final LocalDate today = LocalDate.now();
-
+    private Daily findDailyByUser(LocalDate date, User user) {
+        //final LocalDate today = LocalDate.now();
+        System.out.println("for문 시작");
         for (Daily day : user.getDailyMission()) {
-            System.out.println(day.getCompletionDate().toString());
-            if (day.getCompletionDate().equals(today)) { return day; }
+            System.out.println("1");
+            //System.out.println(day.getCompletionDate().toString());
+            if (day.getCompletionDate().equals(date)) {
+
+                System.out.println("존재");
+                return day;
+            }
         }
-        throw new NotExistTodayDailyException();
+        //throw new NotExistTodayDailyException();
+        System.out.println("For 문 끝");
+        //전부 false 인 새로운 entity return
+        return Daily.builder().user(null)
+                .completionDate(date)
+                .missionA(false)
+                .missionB(false)
+                .missionC(false)
+                .missionD(false)
+                .missionE(false).build();
     }
 }

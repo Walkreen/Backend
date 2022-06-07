@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDate;
 
 @RestController
 @RequiredArgsConstructor
@@ -25,8 +26,8 @@ public class DailyController {
     }
 
     @PostMapping("/setToday")
-    public ResponseEntity<DailyResponse> setTodayDaily(DailyRequest dailyRequest, HttpServletRequest httpServletRequest) {
-        return ResponseEntity.ok().body(dailyService.getTodayDaily(httpServletRequest));
+    public ResponseEntity<DailyResponse> setDailyComplete(@RequestBody DailyRequest dailyRequest, HttpServletRequest httpServletRequest) {
+        return ResponseEntity.ok().body(dailyService.setTodayDaily(dailyRequest, httpServletRequest));
     }
 
     @GetMapping("/month")
