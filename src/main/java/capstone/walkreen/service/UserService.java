@@ -42,7 +42,11 @@ public class UserService {
 
         signUpRequest.setPassword(authService.encodePassword(signUpRequest.getPassword()));
 
-        final User user = UserMapper.INSTANCE.requestToUser(signUpRequest);
+        User user = UserMapper.INSTANCE.requestToUser(signUpRequest);
+
+        user.setPrepoint(0);
+        user.setAccpoint(0);
+
         final User savedUser = userRepository.save(user);
 
         UserResponse userResponse = UserMapper.INSTANCE.userToResponse(savedUser);

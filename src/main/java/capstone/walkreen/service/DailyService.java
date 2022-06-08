@@ -38,18 +38,25 @@ public class DailyService {
 
         final User user = authService.getUserByToken(httpServletRequest);
 
+        Integer reward = 0;
+
         Daily daily = findDailyByUser(dailyRequest.getCompletionDate(),user);
 
         switch (dailyRequest.getMission()) {
             case 'A' : daily.setMissionA(true);
+                        reward = 5;
                         break ;
             case 'B' : daily.setMissionB(true);
+                        reward = 15;
                         break ;
             case 'C' : daily.setMissionC(true);
+                        reward = 10;
                         break ;
             case 'D' : daily.setMissionD(true);
+                        reward = 15;
                         break ;
             case 'E' : daily.setMissionE(true);
+                        reward = 10;
                         break ;
             default : break ;
         }
@@ -63,7 +70,9 @@ public class DailyService {
 
         //user.getDailyMission().add(daily);
         System.out.println(user.getDailyMission().toString());
-        //user.setPoint(user.getPoint() + user);
+        reward += user.getAccpoint();
+        user.setAccpoint(reward);
+        user.setPrepoint(reward);
 
         //dailyRepository.save(testMission);
 
@@ -159,29 +168,63 @@ public class DailyService {
     }
 
     private Daily findDailyByUser(LocalDate date, User user) {
-//        //final LocalDate today = LocalDate.now();
-//        System.out.println("for문 시작");
-//        for (Daily day : user.getDailyMission()) {
-//            System.out.println("1");
-//            //System.out.println(day.getCompletionDate().toString());
-//            if (day.getCompletionDate().equals(date)) {
-//
-//                System.out.println("존재");
-//                return day;
-//            }
-//        }
-//        //throw new NotExistTodayDailyException();
-//        System.out.println("For 문 끝");
-//        //전부 false 인 새로운 entity return
-//        return Daily.builder().user(null)
-//                .completionDate(date)
-//                .missionA(false)
-//                .missionB(false)
-//                .missionC(false)
-//                .missionD(false)
-//                .missionE(false).build();
+        //final LocalDate today = LocalDate.now();
+        System.out.println("for문 시작");
+        for (Daily day : user.getDailyMission()) {
+            System.out.println("1");
+            //System.out.println(day.getCompletionDate().toString());
+            if (day.getCompletionDate().equals(date)) {
 
-        Daily daily = dailyRepository.findDailyByUserAndCompletionDate(user, date).orElseThrow(Exception)
+                System.out.println("존재");
+                return day;
+            }
+        }
+        //throw new NotExistTodayDailyException();
+        System.out.println("For 문 끝");
+        //전부 false 인 새로운 entity return
+        return Daily.builder().user(null)
+                .completionDate(date)
+                .missionA(false)
+                .missionB(false)
+                .missionC(false)
+                .missionD(false)
+                .missionE(false).build();
 
+        //Daily daily = dailyRepository.findDailyByUserAndCompletionDate(user, date).orElseThrow(Exception)
+
+        }
+
+        public DinfoResponse getDailyInfo(HttpServletRequest httpServletRequest){
+
+            Integer count = 0;
+            Integer MAsum = 0;
+            Integer MBsum = 0;
+            Integer MCsum = 0;
+            Integer MDsum = 0;
+            Integer MEsum = 0;
+
+            final User user = authService.getUserByToken(httpServletRequest);
+
+            for (Daily day : user.getDailyMission()) {
+                count++;
+
+                if(day.getMissionA()) {
+                    MAsum++;
+                }
+                if(day.getMissionB()){
+                    MBsum++;
+                }
+                if(day.getMissionC()){
+                    MCsum++;
+                }
+                if(day.getMissionD()){
+                    MDsum++;
+                }
+                if(day.getMissionE()){
+                    MEsum++;
+                }
+            }
+            DinfoResponse dinfoResponse = new DinfoResponse(count,MAsum,MBsum,MCsum,MDsum,MEsum);
+            return dinfoResponse;
     }
 }

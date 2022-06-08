@@ -1,9 +1,6 @@
 package capstone.walkreen.controller;
 
-import capstone.walkreen.dto.DailyRequest;
-import capstone.walkreen.dto.DailyResponse;
-import capstone.walkreen.dto.EmailRequest;
-import capstone.walkreen.dto.StringResponse;
+import capstone.walkreen.dto.*;
 import capstone.walkreen.service.DailyService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -40,6 +37,11 @@ public class DailyController {
     @GetMapping("/test")
     public ResponseEntity<StringResponse> testAPI(HttpServletRequest httpServletRequest) {
         return ResponseEntity.ok().body(dailyService.setDaily(httpServletRequest));
+    }
+
+    @GetMapping("/getDailyinfo")
+    public ResponseEntity<DinfoResponse> getDailyInfo(HttpServletRequest httpServletRequest) {
+        return ResponseEntity.ok().body(dailyService.getDailyInfo(httpServletRequest));
     }
 
 }

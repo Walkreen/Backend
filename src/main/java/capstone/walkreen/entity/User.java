@@ -36,7 +36,9 @@ public class User extends BaseEntity {
 
     private Date birthday;
 
-    private Integer point;
+    private Integer prepoint;
+
+    private Integer accpoint;
 
     @Enumerated(EnumType.STRING)
     private Authority authority = Authority.USER;
