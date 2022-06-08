@@ -31,8 +31,11 @@ public class MissionService {
     public PageMissionResponse getCan(User user) {
         final LocalDate today = LocalDate.now();
 
-//        List<UserMission> linkedMissions = userMissionRepository.findAllByUser(user);
-//        List<Mission> missions = missionRepository.findAll()
+        List<Mission> missions = missionRepository.findAllByStartTimeIsBeforeAndEndTimeIsAfter(today, today);
+
+        for (Mission mission : missions) {
+            System.out.println(mission.getTitle());
+        }
 
         return new PageMissionResponse();
     }
