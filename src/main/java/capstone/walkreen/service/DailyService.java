@@ -53,12 +53,15 @@ public class DailyService {
                         break ;
             default : break ;
         }
+
+        daily.setUser(user);
+
         dailyRepository.save(daily);
 
         System.out.println(daily.getCompletionDate().toString());
 
 
-        user.getDailyMission().add(daily);
+        //user.getDailyMission().add(daily);
         System.out.println(user.getDailyMission().toString());
         //user.setPoint(user.getPoint() + user);
 
@@ -156,26 +159,29 @@ public class DailyService {
     }
 
     private Daily findDailyByUser(LocalDate date, User user) {
-        //final LocalDate today = LocalDate.now();
-        System.out.println("for문 시작");
-        for (Daily day : user.getDailyMission()) {
-            System.out.println("1");
-            //System.out.println(day.getCompletionDate().toString());
-            if (day.getCompletionDate().equals(date)) {
+//        //final LocalDate today = LocalDate.now();
+//        System.out.println("for문 시작");
+//        for (Daily day : user.getDailyMission()) {
+//            System.out.println("1");
+//            //System.out.println(day.getCompletionDate().toString());
+//            if (day.getCompletionDate().equals(date)) {
+//
+//                System.out.println("존재");
+//                return day;
+//            }
+//        }
+//        //throw new NotExistTodayDailyException();
+//        System.out.println("For 문 끝");
+//        //전부 false 인 새로운 entity return
+//        return Daily.builder().user(null)
+//                .completionDate(date)
+//                .missionA(false)
+//                .missionB(false)
+//                .missionC(false)
+//                .missionD(false)
+//                .missionE(false).build();
 
-                System.out.println("존재");
-                return day;
-            }
-        }
-        //throw new NotExistTodayDailyException();
-        System.out.println("For 문 끝");
-        //전부 false 인 새로운 entity return
-        return Daily.builder().user(null)
-                .completionDate(date)
-                .missionA(false)
-                .missionB(false)
-                .missionC(false)
-                .missionD(false)
-                .missionE(false).build();
+        Daily daily = dailyRepository.findDailyByUserAndCompletionDate(user, date).orElseThrow(Exception)
+
     }
 }

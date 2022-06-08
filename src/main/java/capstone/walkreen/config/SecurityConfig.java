@@ -14,7 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.csrf().disable().authorizeRequests()
+        httpSecurity.csrf().disable().authorizeRequests().antMatchers("/h2-console/**").permitAll()
             // 토큰 활용하는 경우 모든 요청 접근 가능하게
             .anyRequest().permitAll()
             .and()
@@ -24,6 +24,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             // 폼 기반 로그인 비활성화
             .formLogin()
             .disable();
+        httpSecurity.headers().frameOptions().disable();
     }
 
     @Bean

@@ -32,4 +32,13 @@ public class Daily extends BaseEntity {
 
     private Boolean missionE;
 
+    public Daily(User user, LocalDate completionDate) {
+        this.user = user;
+        this.completionDate = completionDate;
+        this.missionA = false;
+        this.missionB = false;
+        this.missionC = false;
+        this.missionD = false;
+        this.missionE = false;
+    }
 }
