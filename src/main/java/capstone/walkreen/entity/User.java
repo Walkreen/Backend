@@ -19,6 +19,7 @@ import org.hibernate.annotations.DynamicUpdate;
 @NoArgsConstructor
 @AllArgsConstructor
 @DynamicUpdate
+@Setter
 public class User extends BaseEntity {
 
     private String email;
@@ -34,6 +35,10 @@ public class User extends BaseEntity {
     private Gender gender;
 
     private Date birthday;
+
+    private Integer prepoint;
+
+    private Integer accpoint;
 
     @Enumerated(EnumType.STRING)
     private Authority authority = Authority.USER;
