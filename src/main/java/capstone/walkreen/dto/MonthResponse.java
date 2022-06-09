@@ -15,7 +15,7 @@ public class MonthResponse {
 
     private Long userId;
 
-    private LocalDate date;
+    private String calendar;
 
     private List<MissionScoreResponse> missionScoreResponses = new ArrayList<>();
 

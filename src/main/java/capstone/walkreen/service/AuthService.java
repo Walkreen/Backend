@@ -6,8 +6,8 @@ import capstone.walkreen.exception.InvalidTokenException;
 import capstone.walkreen.exception.InvalidUserException;
 import capstone.walkreen.repository.UserRepository;
 import capstone.walkreen.util.JwtUtil;
-import com.google.common.net.HttpHeaders;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 

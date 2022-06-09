@@ -1,10 +1,15 @@
 package capstone.walkreen.service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import capstone.walkreen.dto.*;
 import capstone.walkreen.entity.Daily;
+import capstone.walkreen.entity.Mission;
 import capstone.walkreen.entity.User;
+import capstone.walkreen.entity.UserMission;
+import capstone.walkreen.enumerations.MissionStatus;
 import capstone.walkreen.repository.DailyRepository;
 import capstone.walkreen.repository.MissionRepository;
 import capstone.walkreen.repository.UserMissionRepository;
@@ -14,58 +19,68 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
 public class CalendarService {
 
-    private UserMissionRepository userMissionRepository;
-    private MissionRepository missionRepository;
-
     private final AuthService authService;
-    private final DailyRepository dailyRepository;
-    private final UserRepository userRepository;
-    private final DailyService dailyService;
 
+    private final UserMissionRepository userMissionRepository;
+    private final DailyRepository dailyRepository;
 
     public MonthResponse getMonthCalendar(Integer year, Integer month, HttpServletRequest httpServletRequest) {
 
-        MonthResponse monthResponse = new MonthResponse();
-
-        LocalDate start = LocalDate.of(year, month, 1);
-        LocalDate end = start.plusDays(start.lengthOfMonth()-1);
-
-        monthResponse.setDate(start);
-
         final User user = authService.getUserByToken(httpServletRequest);
+        final LocalDate start = LocalDate.of(year, month, 1);
+        final LocalDate end = start.plusDays(start.lengthOfMonth()-1);
 
-        monthResponse.setUserId(user.getId());
+        MonthResponse monthResponse = MonthResponse.builder()
+                .userId(user.getId())
+                .calendar(year+"-"+month)
+                .missionScoreResponses(new ArrayList<>())
+                .build();
 
-        Integer dailyPoint = 0;
-        //List<Daily> dailyList = dailyRepository.findDailiesByUserAndCompletionDateBetween(user, start, end);
+        Map<LocalDate, Integer> monthScore = new HashMap<LocalDate, Integer>();
 
-        for(Daily day : dailyRepository.findDailiesByUserAndCompletionDateBetween(user, start, end)) {
-            //count 포인트
-            if (day.getMissionA() == true){
-                dailyPoint++;
-            }
-            if (day.getMissionB() == true){
-                dailyPoint++;
-            }
-            if (day.getMissionC() == true){
-                dailyPoint++;
-            }
-            if (day.getMissionD() == true){
-                dailyPoint++;
-            }
-            if (day.getMissionE() == true){
-                dailyPoint++;
-            }
-            MissionScoreResponse missionScoreResponse = new MissionScoreResponse(day.getCompletionDate(), dailyPoint);
-            monthResponse.getMissionScoreResponses().add(missionScoreResponse);
+        for (Daily day : dailyRepository.findDailiesByUserAndCompletionDateBetween(user, start, end)) {
+            int dailyPoint = 0;
 
-            dailyPoint = 0;
+            if (day.getMissionA()){
+                dailyPoint++;
+            }
+            if (day.getMissionB()){
+                dailyPoint++;
+            }
+            if (day.getMissionC()){
+                dailyPoint++;
+            }
+            if (day.getMissionD()){
+                dailyPoint++;
+            }
+            if (day.getMissionE()){
+                dailyPoint++;
+            }
+            monthScore.put(day.getCompletionDate(), dailyPoint);
         }
+
+        List<UserMission> userMissions = userMissionRepository.findAllByUserAndStatus(user, MissionStatus.DONE);
+
+        for (UserMission userMission : userMissions) {
+            LocalDate localDate = userMission.getCompletionDate();
+
+            if (monthScore.containsKey(localDate))
+                monthScore.put(localDate, (monthScore.get(localDate) + 1));
+            else
+                monthScore.put(localDate, 1);
+        }
+
+        monthScore.forEach((date, point)->{
+            System.out.println( date +" : "+ point );
+            monthResponse.getMissionScoreResponses().add(new MissionScoreResponse(date, point));
+        });
+
         return monthResponse;
     }
 
@@ -78,13 +93,31 @@ public class CalendarService {
 
         final User user = authService.getUserByToken(httpServletRequest);
 
-        for(Daily daily : user.getDailyMission()){
+        for (Daily daily : user.getDailyMission()){
             if (daily.getCompletionDate().equals(localDate)){
                 dayResponse.setDailyResponse(DailyMapper.INSTANCE.dailyToResponse(daily));
                 break;
             }
         }
 
+        final List<UserMission> userMissions = userMissionRepository.findAllByUserAndStatusAndCompletionDate(user, MissionStatus.DONE, localDate);
+        if (userMissions == null) { return dayResponse; }
+
+        List<MissionResponse> missionResponses = new ArrayList<>();
+        for (UserMission userMission : userMissions) {
+            Mission mission = userMission.getMission();
+
+            missionResponses.add(new MissionResponse(
+                    mission.getId(),
+                    MissionStatus.DONE,
+                    mission.getTitle(),
+                    mission.getContents(),
+                    mission.getReward(),
+                    mission.getPeople(),
+                    mission.getStartTime(),
+                    mission.getEndTime()));
+        }
+        dayResponse.setMissionResponses(missionResponses);
         return dayResponse;
     }
 }

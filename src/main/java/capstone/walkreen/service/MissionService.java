@@ -158,6 +158,7 @@ public class MissionService {
 
         UserMission userMission = findByMission(user, mission);
         userMission.setStatus(MissionStatus.DONE);
+        userMission.setCompletionDate(LocalDate.now());
         userMissionRepository.save(userMission);
 
         user.setPrepoint(user.getPrepoint() + mission.getReward());

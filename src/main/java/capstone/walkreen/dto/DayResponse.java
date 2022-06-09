@@ -17,6 +17,6 @@ public class DayResponse {
 
     private DailyResponse dailyResponse;
 
-    private List<MissionResponse> missions  = new ArrayList<>();
+    private List<MissionResponse> missionResponses = new ArrayList<>();
 
 }
