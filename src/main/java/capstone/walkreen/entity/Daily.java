@@ -15,7 +15,12 @@ import java.util.Date;
 @AllArgsConstructor
 @DynamicUpdate
 @Setter
-public class Daily extends BaseEntity {
+public class Daily {
+
+    @Id
+    @GeneratedValue
+    @Column(name = "daily_id")
+    private Long id;
 
     @ManyToOne
     private User user;
