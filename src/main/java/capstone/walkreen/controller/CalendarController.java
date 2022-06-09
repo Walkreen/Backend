@@ -1,6 +1,8 @@
 package capstone.walkreen.controller;
 
 import capstone.walkreen.dto.DailyResponse;
+import capstone.walkreen.dto.DayResponse;
+import capstone.walkreen.dto.MonthResponse;
 import capstone.walkreen.service.CalendarService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,16 +22,19 @@ public class CalendarController {
     private final CalendarService calendarService;
 
     @GetMapping("/month")
-    public ResponseEntity<DailyResponse> getMonthCalendar(
-            @RequestParam("month") LocalDate month,
+    public ResponseEntity<MonthResponse> getMonthCalendar(
+            @RequestParam("year") Integer year,
+            @RequestParam("month") Integer month,
             HttpServletRequest httpServletRequest) {
-        return ResponseEntity.ok().body(calendarService.getMonthCalendar(month, httpServletRequest));
+        return ResponseEntity.ok().body(calendarService.getMonthCalendar(year,month, httpServletRequest));
     }
 
     @GetMapping("/day")
-    public ResponseEntity<DailyResponse> getDayCalendar(
-            @RequestParam("month") LocalDate day,
+    public ResponseEntity<DayResponse> getDayCalendar(
+            @RequestParam("year") Integer year,
+            @RequestParam("month") Integer month,
+            @RequestParam("day") Integer day,
             HttpServletRequest httpServletRequest) {
-        return ResponseEntity.ok().body(calendarService.getDayCalendar(day, httpServletRequest));
+        return ResponseEntity.ok().body(calendarService.getDayCalendar(year, month, day, httpServletRequest));
     }
 }
