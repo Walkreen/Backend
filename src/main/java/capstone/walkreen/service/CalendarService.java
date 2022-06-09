@@ -78,7 +78,14 @@ public class CalendarService {
 
         monthScore.forEach((date, point)->{
             System.out.println( date +" : "+ point );
-            monthResponse.getMissionScoreResponses().add(new MissionScoreResponse(date, point));
+            String score = null;
+
+            if (0 < point && point <= 2)
+                monthResponse.getMissionScoreResponses().add(new MissionScoreResponse(date, "C"));
+            else if (2 < point && point <= 5)
+                monthResponse.getMissionScoreResponses().add(new MissionScoreResponse(date, "B"));
+            else
+                monthResponse.getMissionScoreResponses().add(new MissionScoreResponse(date, "A"));
         });
 
         return monthResponse;
@@ -86,12 +93,11 @@ public class CalendarService {
 
     public DayResponse getDayCalendar(Integer year, Integer month, Integer day, HttpServletRequest httpServletRequest) {
 
-        LocalDate localDate = LocalDate.of(year, month, day);
-
-        DayResponse dayResponse= new DayResponse();
-        dayResponse.setDailyResponse(new DailyResponse(localDate, false, false, false, false, false));
-
         final User user = authService.getUserByToken(httpServletRequest);
+        LocalDate localDate = LocalDate.of(year, month, day);
+        DayResponse dayResponse= DayResponse.builder()
+                        .userId(user.getId()).build();
+        dayResponse.setDailyResponse(new DailyResponse(localDate, false, false, false, false, false));
 
         for (Daily daily : user.getDailyMission()){
             if (daily.getCompletionDate().equals(localDate)){

@@ -17,6 +17,6 @@ public class MissionScoreResponse {
 
     private LocalDate date;
 
-    private Integer Score;
+    private String Score;
 
 }

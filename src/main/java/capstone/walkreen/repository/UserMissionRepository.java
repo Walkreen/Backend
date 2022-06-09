@@ -15,10 +15,9 @@ import java.util.Optional;
 @Repository
 public interface UserMissionRepository extends JpaRepository<UserMission, Long> {
 
+    List<UserMission> findAllByUser(User user);
+
     List<UserMission> findAllByUserAndStatus(User user, MissionStatus status);
 
-    List<UserMission> findAllByUserAndStatusAndCompletionDate(User user, MissionStatus status, LocalDate localDate);
-
-    Optional<UserMission> findAllByUser_Id(Long userId);
-
+    List<UserMission> findAllByUserAndStatusAndCompletionDate(User user, MissionStatus status, LocalDate completionDate);
 }
