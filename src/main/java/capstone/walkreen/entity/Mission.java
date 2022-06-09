@@ -1,12 +1,13 @@
 package capstone.walkreen.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import java.time.LocalDate;
 
 @Entity
 @Builder
@@ -14,18 +15,23 @@ import javax.persistence.Entity;
 @NoArgsConstructor
 @AllArgsConstructor
 @DynamicUpdate
-public class Mission extends BaseEntity {
+public class Mission {
+
+    @Id
+    @GeneratedValue
+    @Column(name = "mission_id")
+    private Long id;
 
     private String title;
 
     private String contents;
 
-    private Long reward;
-    
-    // 이거 시간 자료형 생각해야함
-    private String startTime;
+    private Integer reward;
 
-    private String endTime;
+    @Setter
+    private Long people;
 
-    //private mission type;
+    private LocalDate startTime;
+
+    private LocalDate endTime;
 }
