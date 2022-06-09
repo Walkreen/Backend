@@ -16,6 +16,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+//import static com.sun.tools.doclint.Entity;
+
 @Service
 @RequiredArgsConstructor
 public class DailyService {
@@ -42,26 +44,82 @@ public class DailyService {
 
         Daily daily = findDailyByUser(dailyRequest.getCompletionDate(),user);
 
-        switch (dailyRequest.getMission()) {
-            case 'A' : daily.setMissionA(true);
+        if(daily.getUser() == null) {
+            switch (dailyRequest.getMission()) {
+                case 'A':
                         reward = 5;
-                        break ;
-            case 'B' : daily.setMissionB(true);
+                    daily.setMissionA(true);
+                    break;
+                case 'B':
+
                         reward = 15;
-                        break ;
-            case 'C' : daily.setMissionC(true);
+
+                    daily.setMissionB(true);
+                    break;
+                case 'C':
+
                         reward = 10;
-                        break ;
-            case 'D' : daily.setMissionD(true);
+
+                    daily.setMissionC(true);
+                    break;
+                case 'D':
+
                         reward = 15;
-                        break ;
-            case 'E' : daily.setMissionE(true);
+
+                    daily.setMissionD(true);
+                    break;
+                case 'E':
+
                         reward = 10;
-                        break ;
-            default : break ;
+
+                    daily.setMissionE(true);
+                    break;
+                default:
+                    break;
+            }
         }
 
-        daily.setUser(user);
+        else{
+        switch (dailyRequest.getMission()) {
+                case 'A':
+                    if ((daily.getUser() == user) && (daily.getMissionA() == false || daily.getMissionA() == null)) {
+                        reward = 5;
+                    }
+                    daily.setMissionA(true);
+                    break;
+                case 'B':
+                    if ((daily.getUser() == user) && (daily.getMissionB() == false || daily.getMissionB() == null)) {
+                        reward = 15;
+                    }
+                    daily.setMissionB(true);
+                    break;
+                case 'C':
+                    if ((daily.getUser() == user) && (daily.getMissionC() == false || daily.getMissionC() == null)) {
+                        reward = 10;
+                    }
+                    daily.setMissionC(true);
+                    break;
+                case 'D':
+                    if ((daily.getUser() == user) && (daily.getMissionD() == false || daily.getMissionD() == null)) {
+                        reward = 15;
+                    }
+                    daily.setMissionD(true);
+                    break;
+                case 'E':
+                    if ((daily.getUser() == user) && (daily.getMissionE() == false || daily.getMissionE() == null)) {
+                        reward = 10;
+                    }
+                    daily.setMissionE(true);
+                    break;
+                default:
+                    break;
+            }
+
+        }
+
+        //if (daily.getUser().equals(null)){
+            daily.setUser(user);
+        //}
 
         dailyRepository.save(daily);
 
@@ -169,9 +227,9 @@ public class DailyService {
 
     private Daily findDailyByUser(LocalDate date, User user) {
         //final LocalDate today = LocalDate.now();
-        System.out.println("for문 시작");
+        //System.out.println("for문 시작");
         for (Daily day : user.getDailyMission()) {
-            System.out.println("1");
+            //System.out.println("1");
             //System.out.println(day.getCompletionDate().toString());
             if (day.getCompletionDate().equals(date)) {
 
