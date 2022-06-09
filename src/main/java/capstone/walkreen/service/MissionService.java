@@ -19,7 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -27,17 +29,33 @@ public class MissionService {
 
     private final MissionRepository missionRepository;
     private final UserMissionRepository userMissionRepository;
+    private final UserRepository userRepository;
 
     public PageMissionResponse getCan(User user) {
         final LocalDate today = LocalDate.now();
+        List<Mission> missions;
+        List<Long> missionIds = userMissionRepository.findAllByUser_Id(user.getId()).
+                stream().map(userMission -> userMission.getMission().getId()).collect(Collectors.toList());
 
-        List<Mission> missions = missionRepository.findAllByStartTimeIsBeforeAndEndTimeIsAfter(today, today);
+        if (missionIds.isEmpty())
+            missions = missionRepository.findAll();
+        else
+            missions = missionRepository.findAllByIdIsNotIn(missionIds);
 
+        List<MissionResponse> missionResponses = new ArrayList<>();
         for (Mission mission : missions) {
-            System.out.println(mission.getTitle());
+            missionResponses.add(new MissionResponse(
+                    mission.getId(),
+                    MissionStatus.CAN,
+                    mission.getTitle(),
+                    mission.getContents(),
+                    mission.getReward(),
+                    mission.getPeople(),
+                    mission.getStartTime(),
+                    mission.getEndTime()));
         }
 
-        return new PageMissionResponse();
+        return new PageMissionResponse(user.getId(), missionResponses);
     }
 
     public PageMissionResponse getGoing(User user) {
@@ -142,6 +160,10 @@ public class MissionService {
         userMission.setStatus(MissionStatus.DONE);
         userMissionRepository.save(userMission);
 
+        user.setPrepoint(user.getPrepoint() + mission.getReward());
+        user.setAccpoint(user.getAccpoint() + mission.getReward());
+        userRepository.save(user);
+
         return MissionResponse.builder()
                 .missionId(mission.getId())
                 .status(userMission.getStatus())
@@ -215,7 +237,7 @@ public class MissionService {
         testMission.add(Mission.builder()
                 .title("게임 개발하기")
                 .contents("게임을 개발하고 보상을 획득하세요!")
-                .reward(100L)
+                .reward(100)
                 .people(0L)
                 .startTime(LocalDate.of(2022, 3, 1))
                 .endTime(LocalDate.of(2022, 6, 10)).build());
@@ -223,7 +245,7 @@ public class MissionService {
         testMission.add(Mission.builder()
                 .title("운영체제 개발하기")
                 .contents("운영체제를 개발하고 보상을 획득하세요!")
-                .reward(150L)
+                .reward(150)
                 .people(0L)
                 .startTime(LocalDate.of(2022, 4, 1))
                 .endTime(LocalDate.of(2022, 6, 15)).build());
@@ -231,7 +253,7 @@ public class MissionService {
         testMission.add(Mission.builder()
                 .title("족구 개발하기")
                 .contents("족구를 하고 캐리하여 획득하세요!")
-                .reward(50L)
+                .reward(50)
                 .people(0L)
                 .startTime(LocalDate.of(2022, 4, 10))
                 .endTime(LocalDate.of(2022, 6, 10)).build());
@@ -239,7 +261,7 @@ public class MissionService {
         testMission.add(Mission.builder()
                 .title("개발 새발하기")
                 .contents("개와 발의 새를 고 보상을 획득하세요!")
-                .reward(100L)
+                .reward(100)
                 .people(0L)
                 .startTime(LocalDate.of(2022, 6, 15))
                 .endTime(LocalDate.of(2022, 7, 20)).build());
@@ -247,7 +269,7 @@ public class MissionService {
         testMission.add(Mission.builder()
                 .title("스타벅스 그린 커피 이용하기")
                 .contents("환경을 지키는 제로 웨이스트 커피를 마시고 보상을 획득하세요!")
-                .reward(100L)
+                .reward(100)
                 .people(0L)
                 .startTime(LocalDate.of(2022, 6, 1))
                 .endTime(LocalDate.of(2022, 6, 10)).build());

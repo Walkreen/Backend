@@ -26,7 +26,7 @@ public class Mission {
 
     private String contents;
 
-    private Long reward;
+    private Integer reward;
 
     @Setter
     private Long people;

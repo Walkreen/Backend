@@ -14,7 +14,7 @@ public class SetMissionRequest {
 
     private String content;
 
-    private Long reward;
+    private Integer reward;
 
     private LocalDate startTime;
 

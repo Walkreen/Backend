@@ -22,7 +22,7 @@ public class MissionResponse {
 
     private String contents;
 
-    private Long reward;
+    private Integer reward;
 
     private Long people;
 

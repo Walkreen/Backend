@@ -19,6 +19,7 @@ import org.hibernate.annotations.DynamicUpdate;
 @NoArgsConstructor
 @AllArgsConstructor
 @DynamicUpdate
+@Setter
 public class User {
 
     @Id
@@ -38,6 +39,10 @@ public class User {
     private Gender gender;
 
     private Date birthday;
+
+    private Integer prepoint;
+
+    private Integer accpoint;
 
     @Enumerated(EnumType.STRING)
     private Authority authority = Authority.USER;
