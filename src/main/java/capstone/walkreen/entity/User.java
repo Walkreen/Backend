@@ -20,6 +20,7 @@ import org.hibernate.annotations.DynamicUpdate;
 @AllArgsConstructor
 @DynamicUpdate
 @Setter
+
 public class User {
 
     @Id
