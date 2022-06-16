@@ -128,8 +128,9 @@ public class DailyService {
 
         //user.getDailyMission().add(daily);
         System.out.println(user.getDailyMission().toString());
-        reward += user.getAccpoint();
-        user.setAccpoint(reward);
+        reward += user.getPrepoint();
+        int acc = reward + user.getAccpoint();
+        user.setAccpoint(acc);
         user.setPrepoint(reward);
 
         //dailyRepository.save(testMission);

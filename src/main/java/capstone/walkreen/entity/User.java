@@ -45,6 +45,8 @@ public class User {
 
     private Integer accpoint;
 
+    private Integer item;
+
     @Enumerated(EnumType.STRING)
     private Authority authority = Authority.USER;
 
