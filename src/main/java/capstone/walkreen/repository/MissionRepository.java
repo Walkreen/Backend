@@ -17,4 +17,6 @@ public interface MissionRepository extends JpaRepository<Mission, Long> {
     List<Mission> findAllByIdIsNotInAndStartTimeIsBeforeAndEndTimeIsAfter(List<Long> MissionIds, LocalDate today1, LocalDate today2);
 
     List<Mission> findAllByIdIsNotIn(List<Long> MissionIds);
+
+
 }

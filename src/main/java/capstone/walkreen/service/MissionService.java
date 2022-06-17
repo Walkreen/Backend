@@ -5,21 +5,16 @@ import capstone.walkreen.entity.Mission;
 import capstone.walkreen.entity.User;
 import capstone.walkreen.entity.UserMission;
 import capstone.walkreen.enumerations.MissionStatus;
-import capstone.walkreen.exception.InvalidTokenException;
-import capstone.walkreen.exception.InvalidUserException;
 import capstone.walkreen.exception.NonExistMissionException;
 import capstone.walkreen.repository.MissionRepository;
 import capstone.walkreen.repository.UserMissionRepository;
 import capstone.walkreen.repository.UserRepository;
-import capstone.walkreen.util.JwtUtil;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,13 +29,16 @@ public class MissionService {
     public PageMissionResponse getCan(User user) {
         final LocalDate today = LocalDate.now();
         List<Mission> missions;
-        List<Long> missionIds = userMissionRepository.findAllByUser_Id(user.getId()).
-                stream().map(userMission -> userMission.getMission().getId()).collect(Collectors.toList());
 
-        if (missionIds.isEmpty())
+        List<UserMission> userMissions = userMissionRepository.findAllByUser(user);
+        if (userMissions.isEmpty()) {
             missions = missionRepository.findAll();
-        else
+        }
+        else {
+            List<Long> missionIds = userMissionRepository.findAllByUser(user)
+                    .stream().map(userMission -> userMission.getMission().getId()).collect(Collectors.toList());
             missions = missionRepository.findAllByIdIsNotIn(missionIds);
+        }
 
         List<MissionResponse> missionResponses = new ArrayList<>();
         for (Mission mission : missions) {
@@ -68,18 +66,19 @@ public class MissionService {
         List<MissionResponse> missionResponses = new ArrayList<>();
 
         for (UserMission userMission : goingMissions) {
+            System.out.println(userMission.getId().toString());
             Mission mission = userMission.getMission();
 
             if (mission.getEndTime().isAfter(today)) {
                 missionResponses.add(MissionResponse.builder()
-                                .missionId(mission.getId())
-                                .status(MissionStatus.GOING)
-                                .title(mission.getTitle())
-                                .contents(mission.getContents())
-                                .reward(mission.getReward())
-                                .people(mission.getPeople())
-                                .startTime(mission.getStartTime())
-                                .endTime(mission.getEndTime()).build());
+                        .missionId(mission.getId())
+                        .status(MissionStatus.GOING)
+                        .title(mission.getTitle())
+                        .contents(mission.getContents())
+                        .reward(mission.getReward())
+                        .people(mission.getPeople())
+                        .startTime(mission.getStartTime())
+                        .endTime(mission.getEndTime()).build());
             }
         }
         pageMissionResponse.setMissions(missionResponses);
@@ -114,8 +113,9 @@ public class MissionService {
 
     @Transactional
     public MissionResponse join(Long missionId, User user) {
+        System.out.println("오류1");
         Mission mission = missionRepository.getById(missionId);
-
+        System.out.println("오류2");
         final UserMission savedUserMission = userMissionRepository.save(new UserMission(user, mission, MissionStatus.GOING));
 
         mission.setPeople(mission.getPeople() + 1);
@@ -158,6 +158,7 @@ public class MissionService {
 
         UserMission userMission = findByMission(user, mission);
         userMission.setStatus(MissionStatus.DONE);
+        userMission.setCompletionDate(LocalDate.now());
         userMissionRepository.save(userMission);
 
         user.setPrepoint(user.getPrepoint() + mission.getReward());
@@ -240,7 +241,7 @@ public class MissionService {
                 .reward(100)
                 .people(0L)
                 .startTime(LocalDate.of(2022, 3, 1))
-                .endTime(LocalDate.of(2022, 6, 10)).build());
+                .endTime(LocalDate.of(2022, 6, 30)).build());
 
         testMission.add(Mission.builder()
                 .title("운영체제 개발하기")
@@ -248,7 +249,7 @@ public class MissionService {
                 .reward(150)
                 .people(0L)
                 .startTime(LocalDate.of(2022, 4, 1))
-                .endTime(LocalDate.of(2022, 6, 15)).build());
+                .endTime(LocalDate.of(2022, 6, 30)).build());
 
         testMission.add(Mission.builder()
                 .title("족구 개발하기")
@@ -256,7 +257,7 @@ public class MissionService {
                 .reward(50)
                 .people(0L)
                 .startTime(LocalDate.of(2022, 4, 10))
-                .endTime(LocalDate.of(2022, 6, 10)).build());
+                .endTime(LocalDate.of(2022, 6, 30)).build());
 
         testMission.add(Mission.builder()
                 .title("개발 새발하기")
@@ -272,7 +273,7 @@ public class MissionService {
                 .reward(100)
                 .people(0L)
                 .startTime(LocalDate.of(2022, 6, 1))
-                .endTime(LocalDate.of(2022, 6, 10)).build());
+                .endTime(LocalDate.of(2022, 6, 30)).build());
 
         missionRepository.saveAll(testMission);
 

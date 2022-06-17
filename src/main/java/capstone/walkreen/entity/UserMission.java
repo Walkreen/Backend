@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 
 @Entity
 @Getter
@@ -29,6 +30,9 @@ public class UserMission {
 
     @Setter
     private MissionStatus status;
+
+    @Setter
+    private LocalDate completionDate;
 
     @Builder
     public UserMission(User user, Mission mission, MissionStatus status) {

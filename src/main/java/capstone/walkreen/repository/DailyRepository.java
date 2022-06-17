@@ -16,5 +16,7 @@ public interface DailyRepository extends JpaRepository<Daily, Long> {
 
     List<Daily> findDailyByUserAndCompletionDateBetween(User user, LocalDate start, LocalDate end);
 
+    List<Daily> findDailiesByUserAndCompletionDateBetween(User user, LocalDate start, LocalDate end);
+
     //Optional findDailyByUserAndCompletionDate(User user, LocalDate date);
 }
