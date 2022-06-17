@@ -34,6 +34,8 @@ public class UserResponse {
 
     private Integer accpoint;
 
+    private Integer item;
+
     @Setter
     private TokenResponse tokenResponse;
 }

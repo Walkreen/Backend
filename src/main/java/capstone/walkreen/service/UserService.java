@@ -44,8 +44,9 @@ public class UserService {
 
         User user = UserMapper.INSTANCE.requestToUser(signUpRequest);
 
-        user.setPrepoint(0);
-        user.setAccpoint(0);
+        user.setPrepoint(150);
+        user.setAccpoint(150);
+        user.setItem(0);
 
         final User savedUser = userRepository.save(user);
 
