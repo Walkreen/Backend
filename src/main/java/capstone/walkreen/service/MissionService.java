@@ -236,41 +236,61 @@ public class MissionService {
         ArrayList<Mission> testMission = new ArrayList<>();
 
         testMission.add(Mission.builder()
-                .title("게임 개발하기")
-                .contents("게임을 개발하고 보상을 획득하세요!")
-                .reward(100)
+                .title("오늘도 분리수거 왕!")
+                .contents("분리수거는 폐기물의 소각 및 재활용 등 처분을 용이하게 하기 위해, " +
+                        "그 재질마다 폐기물을 분류하고 그것을 수집하는 것을 말합니다. " +
+                        "우리가 소비한 자원을 재사용이 용이하게 우리 분리수거를 하는 것은 어떤가요?")
+                .reward(15)
                 .people(0L)
                 .startTime(LocalDate.of(2022, 3, 1))
                 .endTime(LocalDate.of(2022, 6, 30)).build());
 
         testMission.add(Mission.builder()
-                .title("운영체제 개발하기")
-                .contents("운영체제를 개발하고 보상을 획득하세요!")
-                .reward(150)
+                .title("컴퓨터 사용 안 할 때 코드 뽑기!")
+                .contents("컴퓨터는 사용하지 않을 때도 전원이 들어갈 수 있습니다. " +
+                        "이는 곧 의도하지 않은 전력을 소비하거나, 안전 사고를 야기할 수 있습니다. " +
+                        "사용하지 않는 컴퓨터에 코드를 뽑아 환경을 보호하는 것은 어떤가요?")
+                .reward(15)
                 .people(0L)
                 .startTime(LocalDate.of(2022, 4, 1))
                 .endTime(LocalDate.of(2022, 6, 30)).build());
 
         testMission.add(Mission.builder()
-                .title("족구 개발하기")
-                .contents("족구를 하고 캐리하여 획득하세요!")
-                .reward(50)
+                .title("한라산 플로깅 투어")
+                .contents("한라산은 대한민국에서 가장 큰 제주도에 있는 가장 높은 산입니다. " +
+                        "또한, 인기있는 관광지로, 매년 많은 사람들이 방문합니다. " +
+                        "여러분도 산에 있는 쓰레기를 줍고 하이킹하는 플로깅을 한라산에서 해보는 것은 어떤가요?")
+                .reward(40)
                 .people(0L)
                 .startTime(LocalDate.of(2022, 4, 10))
                 .endTime(LocalDate.of(2022, 6, 30)).build());
 
         testMission.add(Mission.builder()
-                .title("개발 새발하기")
-                .contents("개와 발의 새를 고 보상을 획득하세요!")
-                .reward(100)
+                .title("북한산 플로깅 + 하이킹")
+                .contents("북한산에서 플로깅을 진행합니다! 플로깅과 하이킹을 결합한 신개념 환경 보호 활동! " +
+                        "우리 플로깅 크루와 함께 흥겨운 하이킹, " +
+                        "보람찬 환경보호를 실천해요!\n" +
+                        "전화번호) 031-8005-xxxx, xxxx")
+                .reward(30)
                 .people(0L)
                 .startTime(LocalDate.of(2022, 6, 15))
                 .endTime(LocalDate.of(2022, 7, 20)).build());
 
         testMission.add(Mission.builder()
-                .title("스타벅스 그린 커피 이용하기")
-                .contents("환경을 지키는 제로 웨이스트 커피를 마시고 보상을 획득하세요!")
-                .reward(100)
+                .title("안 읽은 메일 모두 삭제하기")
+                .contents("읽지 않은 메일은 인터넷 네트워크의 자원 낭비를 초래합니다. " +
+                        "어딘가 데이터로 남아있는 여러분의 정보를 처리하고 전송해야하기 때문인데요, " +
+                        "사용하는 이메일 계정에 읽지 않은 메일을 삭제하여 환경에 도움을 주는 것은 어떤가요?")
+                .reward(10)
+                .people(0L)
+                .startTime(LocalDate.of(2022, 6, 1))
+                .endTime(LocalDate.of(2022, 6, 30)).build());
+
+        testMission.add(Mission.builder()
+                .title("제로 웨이스트 카페 방문하기")
+                .contents("환경을 지키는 모범적인 카페 '제로 웨이스트 카페'를 이용하고 " +
+                        "보상을 획득하세요!")
+                .reward(10)
                 .people(0L)
                 .startTime(LocalDate.of(2022, 6, 1))
                 .endTime(LocalDate.of(2022, 6, 30)).build());
