@@ -22,8 +22,13 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/exists")
-    public ResponseEntity<StringResponse> checkEmailAvailability(@Valid @RequestBody EmailRequest emailRequest) {
+    public ResponseEntity<StringResponse> checkEmailAvailability(@RequestBody EmailRequest emailRequest) {
         return ResponseEntity.ok().body(userService.checkEmailAvailability(emailRequest));
+    }
+
+    @PostMapping("/nickname")
+    public ResponseEntity<StringResponse> checkNicknameAvailability(@RequestParam("nickname") String nickname) {
+        return ResponseEntity.ok().body(userService.checkNicknameAvailability(nickname));
     }
 
     @PostMapping("/signup")

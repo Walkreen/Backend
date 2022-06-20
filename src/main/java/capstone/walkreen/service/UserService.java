@@ -34,6 +34,12 @@ public class UserService {
         return new StringResponse("사용가능한 이메일입니다");
     }
 
+    public StringResponse checkNicknameAvailability(String nickname) {
+        if (userRepository.existsByNickname(nickname)) throw new DuplicateNicknameException();
+
+        return new StringResponse("사용가능한 닉네임입니다");
+    }
+
     @Transactional
     public UserResponse signUp(SignUpRequest signUpRequest) {
 
